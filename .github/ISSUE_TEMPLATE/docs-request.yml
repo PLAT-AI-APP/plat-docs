@@ -1,0 +1,36 @@
+name: 문서 수정 요청
+description: 고치거나 새로 쓸 문서를 요청합니다. 실제 수정은 개발자가 PR 로 합니다.
+title: "[문서] "
+labels: [docs-request]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 요청 종류
+      options:
+        - 내용 수정
+        - 새 문서
+        - 이미지 교체
+        - 삭제
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: 대상 문서
+      description: 사이트 주소나 레포 파일 경로. 새 문서면 넣을 그룹.
+      placeholder: https://plat.so/docs/ko/articles/signup
+  - type: textarea
+    id: detail
+    attributes:
+      label: 내용
+      description: 바꿀 문장·추가할 내용. 이미지는 여기에 붙여 넣어 주세요.
+    validations:
+      required: true
+  - type: dropdown
+    id: target
+    attributes:
+      label: 반영 범위
+      options:
+        - 개발 서버에서 먼저 확인(develop)
+        - 운영까지 바로(main)
