@@ -1,0 +1,58 @@
+# main·develop 에 반영되면 사이트가 읽는 묶음을 만들어 bundle 브랜치의 <브랜치>/ 폴더에 올린다.
+#   bundle/main/*.json    → 운영 사이트
+#   bundle/develop/*.json → 개발 사이트
+# 검사에 실패하면 올리지 않으므로 사이트는 마지막 정상본을 계속 보여 준다.
+name: publish
+
+on:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: 스크립트 테스트
+        run: node --test "scripts/*.test.mjs"
+      - name: 묶음 만들기
+        run: node scripts/build-bundle.mjs --sha "$GITHUB_SHA" --out "$RUNNER_TEMP/bundle"
+      - name: bundle 브랜치에 올리기
+        env:
+          REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          cd "$RUNNER_TEMP"
+          if git ls-remote --exit-code --heads "$REMOTE" bundle > /dev/null; then
+            git clone --quiet --depth 1 --branch bundle "$REMOTE" out
+          else
+            git init --quiet -b bundle out
+            git -C out remote add origin "$REMOTE"
+          fi
+          cd out
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -rf "$BRANCH"
+          cp -R "$RUNNER_TEMP/bundle" "$BRANCH"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "바뀐 내용 없음"
+            exit 0
+          fi
+          git commit --quiet -m "publish $BRANCH @ ${GITHUB_SHA::7}"
+          # main·develop 이 동시에 올리면 한쪽이 밀린다. 폴더가 달라 충돌은 없으니 다시 받아 올린다.
+          for attempt in 1 2 3; do
+            git push --quiet origin bundle && exit 0
+            git pull --quiet --rebase --depth 1 origin bundle
+          done
+          exit 1
