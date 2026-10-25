@@ -28,4 +28,5 @@ jobs:
         run: npm ci
       - name: 사이트 타입 검사·빌드
         working-directory: site
-        run: npx tsc --noEmit && npm run build
+        # typecheck 가 먼저 문서 묶음(src/generated, 커밋하지 않음)을 만든 뒤 타입을 검사하고, 이어서 같은 묶음으로 빌드한다.
+        run: npm run typecheck && npx next build
