@@ -1,0 +1,281 @@
+/*
+ * 로딩 자리표시자.
+ *
+ * 스켈레톤이 컴포넌트마다 제각각이었다 — 어떤 건 animate-pulse, 어떤 건
+ * 아예 정적인 회색 박스, SkeletonCard 는 shimmer 가 통째로 주석 처리돼
+ * 있었다. 색도 bg-card-hover 와 bg-gray-700/50 이 섞여 있었다.
+ * 표현을 이 유틸 하나로 모은다.
+ *
+ * 색은 토큰을 쓰므로 라이트 모드에서도 보인다(예전에는 라이트에서
+ * --bg-card-hover 가 정의돼 있지 않아 자리표시자가 투명했다).
+ * 동작 줄이기 설정에서는 globals 의 prefers-reduced-motion 블록이
+ * 애니메이션을 멈춘다.
+ */
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/*
+ * 스켈레톤이 걷히고 실제 콘텐츠가 들어오는 순간의 등장.
+ * 자리표시자와 콘텐츠가 같은 자리에서 즉시 바뀌면 딱 끊기는 느낌이라, 콘텐츠 쪽만 투명에서 채워 준다.
+ * 스켈레톤을 함께 페이드아웃하지 않는 이유는 둘이 겹치는 동안 높이가 두 배로 잡히기 때문이다.
+ * 동작 줄이기 설정에서는 base.css 의 prefers-reduced-motion 블록이 애니메이션을 멈춘다.
+ */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@utility fade-in {
+  animation: fade-in var(--motion-base) var(--motion-ease-out) both;
+}
+
+@utility content-x {
+  padding-inline: var(--content-margin-x);
+}
+
+/*
+ * 콘텐츠 셸. 카드 그리드가 놓이는 영역의 폭 계약을 한곳에서 정한다.
+ *
+ * max-width 에 좌우 여백까지 포함시키면(예: max-w-300 + content-x) box-sizing: border-box
+ * 때문에 실제 카드 영역이 여백만큼 줄어든다. 1200px 를 기준으로 역산한 카드 폭
+ * (S 186.67 / M 227.2)과 열 계약(CARD_COLUMNS_CLASS)이 그만큼 어긋나 6열이 5열로 떨어진다.
+ * 그래서 여백을 max-width 위에 더해, content box 가 정확히 --content-max-width 가 되게 한다.
+ */
+@utility content-shell {
+  width: 100%;
+  max-width: calc(var(--content-max-width) + 2 * var(--content-margin-x));
+  margin-inline: auto;
+  padding-inline: var(--content-margin-x);
+}
+
+/*
+ * 스켈레톤은 로딩이 --skeleton-delay(300ms) 보다 길어질 때만 보인다.
+ *
+ * 대부분의 요청은 수백 ms 안에 끝나는데, 그 사이 스켈레톤을 바로 그렸다 지우면 회색 상자가
+ * 번쩍였다 사라지는 것처럼 보인다. 그래서 처음엔 투명하게 자리만 잡아 두고(레이아웃은 그대로라
+ * 콘텐츠가 들어와도 밀리지 않는다), 지연이 지나면 옅게 나타난 뒤 맥박을 시작한다.
+ *
+ * 두 애니메이션이 모두 opacity 를 다루는데, 목록 뒤쪽이 이긴다. appear 는 끝난 뒤에도 불투명을
+ * 유지하고(both), pulse 는 appear 가 끝나는 시점부터 돌며 그 위를 덮는다. 동작 줄이기 설정에서도
+ * 지연(delay)은 그대로 남아 번쩍임 없이 정적인 상자로 나타난다.
+ */
+@keyframes skeleton-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/**
+ * 스켈레톤과 같은 300ms 뒤에 서서히 나타난다(맥박은 없다). 금방 끝나는 로딩에서 자리표시자가
+ * 한 번 번쩍이지 않게 하는 용도 — 라우트 로딩 마스코트처럼 스켈레톤이 아닌 자리표시자에 쓴다.
+ */
+@utility delayed-appear {
+  animation: skeleton-appear var(--motion-base) var(--motion-ease-out) 300ms
+    both;
+}
+
+/** 색은 두고 "늦게 나타나 맥박" 동작만 입힌다. 자체 배경색을 쓰는 자리표시자용 */
+@utility skeleton-motion {
+  --skeleton-delay: 300ms;
+  --skeleton-appear-duration: var(--motion-base);
+  animation:
+    skeleton-appear var(--skeleton-appear-duration) var(--motion-ease-out)
+      var(--skeleton-delay) both,
+    skeleton-pulse 1.4s var(--motion-ease-in-out)
+      calc(var(--skeleton-delay) + var(--skeleton-appear-duration)) infinite;
+}
+
+@utility skeleton {
+  @apply skeleton-motion;
+  background-color: var(--bg-card-hover);
+}
+
+/*
+ * 입력 필드 포커스 표시(테두리+배경 톤 동시 적용). border-brand-dark + bg-brand-opacity-3
+ * 조합이 여러 입력 컴포넌트에 반복돼 있어 하나로 묶는다.
+ * 사용: focus:field-focus, focus-within:field-focus 처럼 변형과 함께 쓴다.
+ */
+@utility field-focus {
+  border-color: var(--brand-dark);
+  background-color: var(--brand-opacity-3);
+}
+
+/*
+ * 캐러셀 이전/다음 화살표 버튼. CharacterShowcase, ExperienceCarousel 등에서
+ * 크기(size-9/10)·위치(absolute 좌표)·z-index만 다르고 나머지 8개 클래스가
+ * 그대로 복붙되고 있어 하나로 묶는다.
+ */
+@utility carousel-nav-btn {
+  @apply flex items-center justify-center rounded-2xl bg-overlay-font/12 p-2 text-font-0 opacity-85 backdrop-blur-[1.54px] transition hover:bg-overlay-font/20 hover:opacity-100 disabled:pointer-events-none disabled:opacity-0;
+}
+
+/*
+ * 팔로우 버튼 등 비동기 요청 진행 중 상태. isPending/isFollowPending 조건부로
+ * cursor-wait opacity-70 조합이 여러 화면에 그대로 반복되고 있어 하나로 묶는다.
+ */
+@utility pending-state {
+  @apply cursor-wait opacity-70;
+}
+
+/*
+ * 프로필/아바타 이미지. rounded-full object-cover 조합이 헤더·사이드바·댓글·채팅 등
+ * 10곳 넘게 반복되고 있어 하나로 묶는다. size-*는 자리마다 달라 그대로 둔다.
+ *
+ * flex-shrink: 0 — 아바타는 옆 글이 길어져도 좁아지면 안 된다. flex 줄 안의 이미지는 기본값(1) 때문에
+ * 글이 길어지거나 버튼이 붙으면 폭이 줄어 타원이 된다. 자리마다 shrink-0 을 빠뜨리지 않게 여기서 한 번에 막는다.
+ */
+@utility avatar-img {
+  border-radius: calc(infinity* 1px);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/*
+ * 팝오버/드롭다운 메뉴 아이템. flex items-center + rounded-lg px-2.5 py-2 +
+ * hover:bg-btn-hover 조합이 popover/드롭다운 10여 개 파일에 그대로 반복되고 있어
+ * 하나로 묶는다. 정렬(justify-between)·gap·너비·커서·텍스트 색 등 나머지는
+ * 여전히 호출부에서 정한다.
+ */
+@utility menu-item {
+  @apply flex items-center rounded-lg px-2.5 py-2 transition-colors hover:bg-btn-hover;
+}
+
+/*
+ * 콘텐츠 셸의 좁은 변형들.
+ *
+ * 설정(592px)·공지(620px)·내 채팅(860px)·스튜디오(700px)처럼 페이지마다
+ * max-w-* 를 따로 달고 있었다. #page-content 가 이미 content-x 로 좌우 여백을
+ * 주는 위에 페이지가 또 폭을 잡으니 여백이 두 번 들어가고, 값도 제각각이었다.
+ *
+ * --content-max-width 만 덮어쓰고 폭 계산은 content-shell 한 곳에 맡긴다.
+ * (max-width 에 여백을 더해 content box 를 정확히 맞추는 계산이 거기 있다.)
+ */
+@utility content-shell-narrow {
+  --content-max-width: 620px;
+  @apply content-shell;
+}
+
+@utility content-shell-mid {
+  --content-max-width: 860px;
+  @apply content-shell;
+}
+
+/*
+ * 터치 히트 영역 보정.
+ *
+ * 아이콘 버튼이 size-4 ~ size-8(16~32px)로 만들어져 있어 터치 기기에서
+ * 44px 기준을 한참 밑돈다. 특히 카드 캐러셀 화살표와 케밥 메뉴는 서로
+ * 붙어 있어 잘못 누르기 쉽다.
+ *
+ * 보이는 크기는 그대로 두고 눌리는 영역만 넓힌다. inset 을 음수로 주는 방식은
+ * 원래 크기에 비례해 커지므로 24px 버튼이 40px 에 그친다. 그래서 최소 44px 를
+ * 직접 보장하고, 이미 그보다 큰 버튼은 자기 크기를 유지하게 max() 를 쓴다.
+ */
+@utility tap-target {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+  }
+}
+
+/*
+ * 가로로 미는 탭 줄.
+ *
+ * 홈 상단 탭 5개가 `flex w-full gap-2` 만 걸고 있어서, 라벨이 긴 언어(영어·태국어)
+ * 에서는 375px 화면에 들어가지 않았다. flex 가 항목을 줄여 한국어에서는 "카테 /
+ * 고리" 처럼 단어 중간에서 줄이 바뀌었고, 그러고도 남는 넘침은 #page-content 의
+ * overflow-x-hidden 에 잘려 스크롤할 방법조차 없었다.
+ *
+ * 컴포넌트가 아니라 유틸리티로 두는 이유: 앱의 탭 구현 6종은 렌더하는 요소도
+ * (Link / button / a) 활성 표시 방식도(border-b-2 / 절대배치 밑줄 / framer-motion
+ * layoutId) 제각각이다. 하나의 컴포넌트로 묶으면 그 차이를 없애야 하지만,
+ * 실제 결함은 넘침 하나뿐이므로 그것만 고친다.
+ *
+ * 항목의 shrink-0 / whitespace-nowrap 을 자식 선택자로 함께 건다. 이 둘을
+ * 호출부에 맡기면 새 탭을 추가할 때 빠뜨리면서 같은 문제가 되돌아온다.
+ */
+@utility tab-strip {
+  @apply no-scrollbar;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+
+  & > * {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
+/*
+ * 첫 충전 상품 카드. 다른 카드와 같은 틀에 브랜드색이 오른쪽 위에서 번지는 테두리와 옅은 빛만 더해 눈에 띄게 한다.
+ * 테두리는 padding-box·border-box 두 겹 배경으로 그린다(border-image 는 둥근 모서리를 따르지 못한다).
+ * 바탕을 배경으로 덮으므로 hover 는 배경색 대신 빛의 세기로 보여 준다.
+ */
+/* 사용자 속성은 등록해야 색으로 보간된다. 등록하지 않으면 hover 때 빛이 툭 바뀐다. */
+@property --first-charge-glow {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+
+@utility first-charge-card {
+  --first-charge-glow: var(--brand-opacity-2);
+  border: 1px solid transparent;
+  background:
+    radial-gradient(90% 180% at 100% 0%, var(--first-charge-glow) 0%, transparent 70%) padding-box,
+    linear-gradient(var(--bg-dark), var(--bg-dark)) padding-box,
+    linear-gradient(120deg, var(--brand) 0%, var(--brand-opacity-2) 50%, var(--brand) 100%) border-box;
+  transition: --first-charge-glow var(--motion-slow) var(--motion-ease-out);
+
+  &:hover:not(:disabled) {
+    --first-charge-glow: rgb(255 122 0 / 0.3);
+  }
+}
+
+/* 첫 충전 라벨 위로 몇 초에 한 번 빛이 지나간다. 동작 줄이기 설정에서는 base.css 가 멈춘다. */
+@keyframes first-charge-sheen {
+  0%,
+  72% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(260%) skewX(-20deg);
+  }
+}
+
+@utility first-charge-sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+    animation: first-charge-sheen 4.5s var(--motion-ease-in-out) infinite;
+    pointer-events: none;
+  }
+}

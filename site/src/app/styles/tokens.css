@@ -1,0 +1,279 @@
+/* =========================================================================
+ * 색상 토큰
+ *
+ * 네이밍은 다크 테마를 기준으로 붙어 있다(--bg-dark, --button-dark-hover 등).
+ * 라이트에서는 이름이 아니라 **역할**로 읽어야 한다:
+ *   --bg-dark      = 기본 표면(페이지 · 모달 · 팝오버 · 사이드바)
+ *   --bg-darker    = 한 단계 들어간 면
+ *   --bg-darkest   = 가장 들어간 면(입력 필드 등)
+ *   --bg-card      = 카드 · 패널
+ *   --font-0 → --font-3-disabled = 강함 → 약함
+ *   --font-4       = --font-1의 반전(어두운 면 위 글자)
+ * 두 블록은 **같은 키 집합**을 정의해야 한다. 한쪽에만 있는 키는 반대 테마에서
+ * var()가 해석되지 않아 배경이 투명해지거나 보더가 currentColor로 떨어진다.
+ * ========================================================================= */
+:root {
+  /* 오렌지 브랜드는 두 테마 공통. 다만 --brand-dark 는 "현재 배경 위에서 읽히는
+     브랜드 텍스트/보더색"이라 라이트에서는 더 어둡게, 다크에서는 더 밝게 뒤집힌다.
+     (bg-brand-dark 사용처는 없고 text-/border- 로만 쓰인다) */
+  --brand: #ff7a00;
+  --brand-dark: #c25600;
+  --brand-opacity: rgba(255, 122, 0, 0.1); /* 10% 투명도 적용 */
+  --brand-opacity-2: rgba(255, 122, 0, 0.2); /* 20% 투명도 적용 */
+  --brand-opacity-3: rgba(255, 122, 0, 0.04);
+
+  --font-0: #0b0d17;
+  --font-1: #11141f;
+  --font-2: #4a4d5e;
+  --font-3-disabled: #9096a8;
+  --font-4: #ffffff;
+  --font-error: #ff3842;
+  --font-accents: #ed1c24;
+
+  /* 채팅 본문: 대사(나·캐릭터)와 나레이션. 라이트에서는 기존 본문색을 그대로 쓴다. */
+  --chat-speech: var(--font-1);
+  --chat-narration: var(--font-2);
+
+  /* 테두리는 개수를 줄이는 대신 남은 것은 보이게 한다. 배경 대비 약 1.55:1. */
+  --border: #ced2dd;
+
+  --bg-dark: #ffffff;
+  --bg-darker: #f7f8fa;
+  --bg-darkest: #f1f3f6;
+  --bg-card: #f5f6f8;
+  --bg-card-hover: #eceef2;
+  --bg-card-selected: #e4e7ee;
+  --button-dark-hover: #f2f3f6;
+  --button-dark-selected: #e8eaf0;
+
+  /* 상태색 — 지금까지 #00c925 / #0088FF / #34C759 / #F2B34A 처럼
+     화면마다 다르게 하드코딩되던 값들을 여기로 모은다. */
+  --success: #12a150;
+  --success-bg: rgba(18, 161, 80, 0.1);
+  --warning: #c2620a;
+  --warning-bg: rgba(194, 98, 10, 0.1);
+  --danger: #e5484d;
+  --danger-bg: rgba(229, 72, 77, 0.1);
+  --info: #2563eb;
+  --info-bg: rgba(37, 99, 235, 0.1);
+
+  /* 빈 화면 마스코트(반원 캐릭터). 카드 면(--bg-card) 위에 놓인다. */
+  --mascot-body: #dde1ea;
+  --mascot-halo: #e9ecf2;
+  --mascot-face: #3a3f52;
+  --mascot-line: #b4bacb;
+  /* 앱 아이콘 바탕. 시안의 라이트·다크 아이콘은 바탕색만 다르다. 화면과 대비되도록 반대 테마의 아이콘을 쓴다. */
+  --app-icon-bg: #111112;
+  /* 헤더 워드마크. 시안의 라이트·다크 로고는 글자색과 마크 주황만 다르다. */
+  --logo-text: #2f3132;
+  --logo-mark: #ff5a1d;
+
+  /* --- 테마 불변 토큰: .dark 에서 재정의하지 않는다 --- */
+
+  /* 브랜드 오렌지(#ff7a00)는 두 테마 모두 밝은 면이라, 그 위 글자는 항상 어둡다.
+     --font-4 는 라이트에서 흰색으로 뒤집히므로 이 자리에 쓰면 안 된다. */
+  --on-brand: #0d0e11;
+
+  /* 스크림 / 사진 위에 얹는 면. 뒤를 덮거나 이미지 위에 놓이는 자리라
+     두 테마 모두 어둡다. 불투명도는 Tailwind 수식자로 조절한다 —
+     bg-scrim/50(모달 배경) · bg-scrim/80(카드 오버레이) · bg-scrim(불투명). */
+  --scrim: #0d0e11;
+  /* 스크림 위 글자는 테마와 무관하게 항상 밝다(--font-1 은 라이트에서 검게 뒤집힌다). */
+  --overlay-font: #ffffff;
+
+  /* 그림자 — 라이트에서는 검정 50% 그림자가 지나치게 무거워 테마별로 나눈다.
+     @theme inline 은 정적이라 여기서 값을 잡고 거기서 별칭만 건다. */
+  --elevation-card: 0 1px 2px 0 rgba(16, 24, 40, 0.06);
+  --elevation-popover: 0 8px 24px 0 rgba(16, 24, 40, 0.12);
+  --elevation-modal: 0 24px 48px -12px rgba(16, 24, 40, 0.18);
+  --elevation-card-heavy: 0 10px 40px 0 rgba(16, 24, 40, 0.16);
+
+  /* 상단 헤더 높이. 본문 영역이 calc(100dvh - 이 값) 으로 높이를 잡으므로
+     헤더 크기를 바꿀 때 반드시 여기 하나만 고치면 되도록 모아 둔다. */
+  --header-height: 56px;
+
+  /* 사이드바를 제외한 모든 콘텐츠 컨테이너가 공유하는 x축 여백.
+     창이 좁아져도 콘텐츠가 화면 끝에 붙지 않도록 하는 최소 여유 공간이다.
+     홈 배너 · 채팅방처럼 풀블리드가 필요한 화면만 예외적으로 제외한다.
+     좁은 화면에서는 36px 가 폭의 상당 부분을 먹어 카드가 뭉개지므로 아래에서 줄인다. */
+  --content-margin-x: 36px;
+
+  /* 레이아웃 폭 계약.
+     --sidebar-width 는 현재 사이드바 상태에 따라 ClientLayout 이 덮어쓰는 런타임 값이고,
+     아래 두 상수가 그 후보다. 콘텐츠 그리드는 --content-max-width 안에서만 계산된다. */
+  --sidebar-width-folded: 70px;
+  --sidebar-width-expanded: 240px;
+  --sidebar-width: var(--sidebar-width-folded);
+  --content-max-width: 1200px;
+  --card-gap: 16px;
+
+  /*
+   * 겹침 순서(z-index).
+   * 유틸리티로 직접 쓰지는 않지만, 새 오버레이를 만들 때 어느 값을 골라야
+   * 하는지 한곳에서 알 수 있도록 층을 적어 둔다.
+   *   10~30  : 화면 안 요소(헤더 20, 사이드바 오버레이 30)
+   *   100/101: 모달 배경 / 모달 본문
+   *   110/111: 모달 위에 다시 뜨는 것(날짜 선택기 등)
+   *   200    : toast — 항상 최상단(sonner 기본값을 이 값으로 낮춘다)
+   */
+
+  /* 모션 — 테마와 무관하다. Tailwind 쪽 별칭은 @theme inline 참고. */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --motion-ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/*
+ * 브레이크포인트.
+ *
+ * 값은 Tailwind 기본값과 같지만, 정의를 명시해 두 가지를 얻는다.
+ * 하나는 grep 이 되는 단일 출처, 다른 하나는 아래 JS 상수와의 짝이다.
+ * src/constants/layout.ts 의 MOBILE_MAX_WIDTH_QUERY(639px) 는 sm 의 바로
+ * 아래 경계이고, TABLET_MAX_WIDTH_QUERY(1023px) 는 lg 의 바로 아래 경계다.
+ * 둘 중 하나만 바꾸면 CSS 와 JS 가 서로 다른 지점에서 화면을 나누게 된다.
+ *
+ * 이 앱의 어휘는 세 단계다 — 모바일(<640) / 태블릿(640~1023) / 데스크톱(>=1024).
+ * xl 이상은 --content-max-width(1200px) 가 이미 성장을 막으므로 쓸 일이 없다.
+ *
+ * 다만 사이드바가 뷰포트와 무관하게 콘텐츠 폭을 바꾸므로, 콘텐츠 열 안쪽의
+ * 반응형은 뷰포트가 아니라 컨테이너 쿼리(@container)로 쓰는 것이 기본이다.
+ * 뷰포트 브레이크포인트는 셸(헤더·사이드바·드로어)과 fixed 오버레이의 몫이다.
+ */
+@theme {
+  --breakpoint-sm: 40rem; /* 640px */
+  --breakpoint-md: 48rem; /* 768px */
+  --breakpoint-lg: 64rem; /* 1024px */
+  --breakpoint-xl: 80rem; /* 1280px */
+}
+
+/* 좁은 화면에서는 좌우 여백을 줄여 카드가 쓸 수 있는 폭을 확보한다. */
+@media (max-width: 639px) {
+  :root {
+    --content-margin-x: 16px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  :root {
+    --content-margin-x: 24px;
+  }
+}
+
+.dark {
+  --brand: #ff7a00;
+  --brand-dark: #ff9a3c;
+  --brand-opacity: rgba(255, 122, 0, 0.1);
+  --brand-opacity-2: rgba(255, 122, 0, 0.2);
+  --brand-opacity-3: rgba(255, 122, 0, 0.03);
+
+  --font-0: #f5f5f5;
+  --font-1: #ecedf5;
+  --font-2: #989db8;
+  --font-3-disabled: #5c6180;
+  --font-4: #0d0e11;
+  --font-accents: #ed1c24;
+  --font-error: #ff3842;
+
+  --chat-speech: #fafafa;
+  --chat-narration: #c2c2cc;
+
+  --border: #3a4166;
+
+  --bg-dark: #11141f;
+  --bg-darker: #0e1018;
+  --bg-darkest: #0a0c14;
+  --bg-card: #181c2e;
+  --bg-card-hover: #1f2440;
+  --bg-card-selected: #252b50;
+  --button-dark-hover: #161a28;
+  --button-dark-selected: #1c2138;
+
+  --success: #00c925;
+  --success-bg: rgba(0, 201, 37, 0.16);
+  --warning: #ff9a3c;
+  --warning-bg: rgba(255, 154, 60, 0.16);
+  --danger: #ff3842;
+  --danger-bg: rgba(255, 56, 66, 0.16);
+  --info: #60a5fa;
+  --info-bg: rgba(96, 165, 250, 0.16);
+
+  --mascot-body: #2a2f45;
+  --mascot-halo: #1e2335;
+  --mascot-face: #11141f;
+  --mascot-line: #4a5070;
+  --app-icon-bg: #ffffff;
+  --logo-text: #ffffff;
+  --logo-mark: #ff6c1d;
+
+  --elevation-card: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --elevation-popover: 0 8px 24px 0 rgba(0, 0, 0, 0.2);
+  --elevation-modal: 0 24px 48px -12px rgba(0, 0, 0, 0.55);
+  --elevation-card-heavy: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+}
+
+@theme inline {
+  /* 모션 스케일 — 값과 근거는 src/constants/motion.ts 에 함께 정의돼 있다.
+     @theme inline 은 값을 유틸리티에 인라인할 뿐 CSS 변수로 내보내지 않으므로,
+     원시 CSS 에서도 쓰는 값은 :root 의 --motion-* 를 참조한다. */
+  --default-transition-duration: var(--motion-base);
+  --default-transition-timing-function: var(--motion-ease-out);
+  --ease-out: var(--motion-ease-out);
+  --ease-in-out: var(--motion-ease-in-out);
+  --duration-fast: var(--motion-fast);
+  --duration-base: var(--motion-base);
+  --duration-slow: var(--motion-slow);
+
+  /* 그림자 스케일 — card < popover < modal 순으로만 깊어진다 */
+  --shadow-card: var(--elevation-card);
+  --shadow-card-heavy: var(--elevation-card-heavy);
+  --shadow-popover: var(--elevation-popover);
+  --shadow-modal: var(--elevation-modal);
+
+  /* 모서리는 Tailwind 기본 스케일을 그대로 쓴다.
+     rounded-lg(8) < rounded-xl(12) < rounded-2xl(16) < rounded-3xl(24) */
+
+  --color-font-0: var(--font-0);
+  --color-font-1: var(--font-1);
+  --color-font-2: var(--font-2);
+  --color-font-error: var(--font-error);
+  --color-font-disabled: var(--font-3-disabled);
+  --color-font-4: var(--font-4);
+  --color-speech: var(--chat-speech);
+  --color-narration: var(--chat-narration);
+  /* 유틸리티 접두사(bg-/border-)가 이름에 중복되지 않도록 접두사를 뺀 이름 사용 */
+  --color-main: var(--border);
+  --color-dark: var(--bg-dark);
+  --color-darker: var(--bg-darker);
+  --color-darkest: var(--bg-darkest);
+  --color-card: var(--bg-card);
+  --color-card-hover: var(--bg-card-hover);
+  --color-card-selected: var(--bg-card-selected);
+  --color-btn-hover: var(--button-dark-hover);
+  --color-btn-selected: var(--button-dark-selected);
+  --color-brand: var(--brand);
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-opacity: var(--brand-opacity);
+  --color-brand-opacity-2: var(--brand-opacity-2);
+  --color-brand-opacity-3: var(--brand-opacity-3);
+  --color-font-accents: var(--font-accents);
+  --color-mascot-halo: var(--mascot-halo);
+  --color-mascot-body: var(--mascot-body);
+
+  /* 상태색: text-success / bg-success-bg … */
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  /* 브랜드 배경 위 글자: text-on-brand */
+  --color-on-brand: var(--on-brand);
+  /* 스크림: bg-scrim (+ /50 /80 등) / text-overlay-font */
+  --color-scrim: var(--scrim);
+  --color-overlay-font: var(--overlay-font);
+}
