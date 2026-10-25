@@ -1,0 +1,76 @@
+/* 1. 전체 스크롤바 공통 설정 (기본 틀) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar:hover {
+  background-color: rgba(255, 255, 255, 0.01);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 2. 막대(Thumb) 공통 디자인 (모양 및 트랜지션) */
+::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  background-color: var(--border);
+  border: 3px solid transparent;
+  border-radius: 100px;
+  min-height: 40px;
+  /* 5.5s는 너무 길어 0.3s로 수정했습니다. */
+  transition:
+    background-color 0.2s ease,
+    border-width 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bg-card-selected) !important;
+  border: 1px solid transparent; /* 테두리가 줄어들며 8px로 두꺼워짐 */
+  cursor: pointer;
+}
+
+/*
+ * 2-1. 짧은 스크롤 영역(2~5줄 textarea 등) 보정.
+ * 전역 min-height(40px)가 트랙 전체 길이와 같거나 커지면 막대가 트랙을 꽉 채워
+ * 드래그할 여백이 없어진다(휠 스크롤은 되지만 막대는 못 움직이는 증상).
+ * 긴 리스트(사이드바 대화 목록 등)의 최소 두께는 그대로 두고, 이 클래스가 붙은
+ * 짧은 영역만 더 작은 최소값을 쓰도록 스코프한다.
+ */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  min-height: 8px;
+}
+
+/* 3. 스크롤 할 때만 보이는 모드 (.hide-scrollbar-on-idle 클래스 요소) */
+/* [기본 상태] 스크롤 안 할 때: 완전히 투명하게 숨김 */
+.hide-scrollbar-on-idle::-webkit-scrollbar-thumb {
+  background-color: transparent !important;
+  border: 3px solid transparent; /* 10px 중 4px만 보이게 설정하는 기본값 */
+}
+
+/* [스크롤 중] is-scrolling 클래스가 붙었을 때만 색상 노출 */
+.hide-scrollbar-on-idle.is-scrolling::-webkit-scrollbar-thumb {
+  background-color: var(--border) !important;
+}
+
+/* [스크롤 중 + 트랙 호버] 트랙 영역 배경 살짝 노출 */
+.hide-scrollbar-on-idle.is-scrolling::-webkit-scrollbar:hover {
+  background-color: rgba(255, 255, 255, 0.01);
+}
+
+/* [스크롤 중 + 막대 호버] 막대를 직접 올리면 색상 변경 및 두께 확장 */
+.hide-scrollbar-on-idle.is-scrolling::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bg-card-selected) !important;
+  border: 1px solid transparent; /* 테두리가 줄어들며 8px로 두꺼워짐 */
+  cursor: pointer;
+}
+
+@utility no-scrollbar {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+  /* Chrome, Safari, Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

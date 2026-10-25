@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+/* plat-fe(src/app/styles)에서 문서 화면이 쓰는 것만 가져왔다. 토큰을 바꿀 때는 앱과 함께 맞춘다. */
+@import "./styles/tokens.css"; /* 색상/모션/그림자 등 디자인 토큰 (light/.dark) */
+@import "./styles/base.css"; /* html/body 리셋, 포커스 링, 버튼 기본 트랜지션 */
+@import "./styles/typography.css"; /* display/heading/title/body/caption 유틸리티 */
+@import "./styles/scrollbar.css"; /* 스크롤바 커스텀 */
+@import "./styles/utilities.css"; /* content-x, skeleton, field-focus 등 커스텀 유틸리티 */
