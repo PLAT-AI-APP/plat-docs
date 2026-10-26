@@ -1,0 +1,18 @@
+# Firebase App Hosting 설정(운영: main → docs.plat.so). 백엔드의 앱 루트 디렉터리를 site 로 지정해야 이 파일을 읽는다.
+# 개발 배포(Vercel, develop → dev-docs.plat.so)는 같은 값을 Vercel 프로젝트 환경 변수로 넣는다(README 참고).
+runConfig:
+  # 문서 화면은 빌드 때 미리 그려 두고, 서버는 검색 자동완성만 처리한다. 쓰지 않을 때는 0 대까지 줄인다.
+  minInstances: 0
+  maxInstances: 2
+
+env:
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: https://docs.plat.so
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_APP_URL
+    value: https://plat.so
+    availability: [BUILD, RUNTIME]
+  # 클로즈베타 동안은 검색 엔진 수집을 막는다. 정식 출시 때 "true" 로 바꾼다.
+  - variable: NEXT_PUBLIC_ALLOW_INDEXING
+    value: "false"
+    availability: [BUILD, RUNTIME]

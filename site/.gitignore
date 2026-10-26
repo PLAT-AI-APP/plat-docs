@@ -1,0 +1,15 @@
+# 의존성·빌드 결과물
+/node_modules
+/.next
+/out
+next-env.d.ts
+*.tsbuildinfo
+
+# 빌드할 때마다 레포 문서에서 새로 만드는 것(scripts/prepare-content.mjs)
+/src/generated
+/public/assets
+/.content
+
+# 로컬 환경 변수·로그
+.env*.local
+*.log
