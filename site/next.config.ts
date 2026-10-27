@@ -18,7 +18,7 @@ const SECURITY_HEADERS = [
 ];
 
 /*
- * 두 곳에서 같은 빌드로 돈다. develop 은 Vercel(dev-docs.plat.so), main 은 Firebase App Hosting(docs.plat.so, apphosting.yaml).
+ * 두 곳에서 같은 빌드로 돈다. develop 은 Vercel(docs-dev.plat.so), main 은 Firebase App Hosting(docs.plat.so, apphosting.yaml).
  * 문서는 빌드 때 모든 페이지를 미리 그려 두므로(generateStaticParams) 서버는 그려 둔 화면과 검색 자동완성만 내주고,
  * 문서가 바뀌면 브랜치 커밋마다 각 호스팅이 다시 빌드한다.
  */

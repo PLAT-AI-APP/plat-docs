@@ -1,5 +1,5 @@
 /*
- * 배포마다 달라지는 주소·설정. Vercel(develop → dev-docs.plat.so)과 Firebase App Hosting(main → docs.plat.so)의
+ * 배포마다 달라지는 주소·설정. Vercel(develop → docs-dev.plat.so)과 Firebase App Hosting(main → docs.plat.so)의
  * 환경 변수로 정하고, 없으면 운영 값을 쓴다. NEXT_PUBLIC_ 값은 빌드 때 화면 코드에 박히므로 바꾸면 다시 빌드해야 한다.
  */
 
