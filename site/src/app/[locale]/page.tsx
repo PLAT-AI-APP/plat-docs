@@ -44,8 +44,10 @@ export default async function DocsHomePage({ params }: DocsHomeProps) {
 
   return (
     <>
-      {/* 배너도 테마를 따른다. 바탕은 본문보다 한 단계 짙은 면에 브랜드 빛을 얹는다(라이트에서는 옅은 주황). */}
-      <section className="relative overflow-hidden border-b border-main bg-darker text-font-1">
+      {/* 배너도 테마를 따른다. 바탕은 본문보다 한 단계 짙은 면에 브랜드 빛을 얹는다(라이트에서는 옅은 주황).
+          overflow-hidden 을 두면 검색 자동완성 드롭다운이 배너 아래 선에서 잘린다. 빛은 inset-0 레이어 안에서만
+          그려져 넘치지 않으므로 잘라 내지 않고, 드롭다운이 아래 카테고리 목록 위에 뜨도록 배너를 한 층 올린다. */}
+      <section className="relative z-10 border-b border-main bg-darker text-font-1">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,var(--brand-opacity-2),transparent_55%),radial-gradient(ellipse_at_85%_100%,var(--brand-opacity),transparent_60%)]"
