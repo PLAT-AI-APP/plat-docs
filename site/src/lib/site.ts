@@ -11,3 +11,11 @@ export const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://plat.so";
 
 /** 검색 엔진 수집 허용 여부. 클로즈베타 동안은 막아 두고, 정식 출시 때 배포 env 에 "true" 를 넣어 연다(plat-fe 와 같다). */
 export const ALLOW_INDEXING = process.env.NEXT_PUBLIC_ALLOW_INDEXING === "true";
+
+/**
+ * 탭 제목 앞에 붙이는 환경 표시. 개발 문서(docs-dev)를 운영과 한눈에 가르려는 것이다(plat-fe 와 같다).
+ * 개발 배포에만 NEXT_PUBLIC_APP_ENV=dev 를 넣는다. 없으면 운영으로 보고 아무것도 붙이지 않는다.
+ */
+const APP_ENV = process.env.NEXT_PUBLIC_APP_ENV;
+
+export const TITLE_PREFIX = APP_ENV === "dev" || APP_ENV === "local" ? `${APP_ENV}: ` : "";

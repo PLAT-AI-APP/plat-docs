@@ -102,6 +102,7 @@ npm --prefix site run dev
 | `NEXT_PUBLIC_SITE_URL` | `https://docs-dev.plat.so` | `https://docs.plat.so` |
 | `NEXT_PUBLIC_APP_URL` | `https://dev.plat.so` | `https://plat.so` |
 | `NEXT_PUBLIC_ALLOW_INDEXING` | `false` | 클로즈베타 동안 `false` |
+| `NEXT_PUBLIC_APP_ENV` | `dev` (탭 제목 앞에 `dev: ` 가 붙는다) | 넣지 않는다 |
 
 - 빌드는 레포 전체(`ko/`, `en/`, `assets/`, `scripts/`)를 읽으므로, 앱 루트 밖 파일을 빌드에 포함하는 설정을 켜 둡니다(Vercel 기본값).
 - 도메인은 각 호스팅에 추가한 뒤, 안내하는 CNAME 을 `plat.so` DNS(Route 53)에 넣습니다.
