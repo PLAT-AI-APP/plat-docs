@@ -6,6 +6,7 @@ import DocsHeader from "@/components/docs/DocsHeader";
 import { readDocsLocale } from "@/components/docs/docsMetadata";
 import { DocsProvider } from "@/components/docs/DocsProvider";
 import { getDocsMessages } from "@/i18n/locales/docs";
+import { TITLE_PREFIX } from "@/lib/site";
 
 interface DocsLayoutProps {
   children: ReactNode;
@@ -18,7 +19,11 @@ export async function generateMetadata({ params }: DocsLayoutProps): Promise<Met
   const messages = getDocsMessages(locale);
   return {
     // absolute: 루트 레이아웃의 "%s | PLAT" 템플릿을 덧붙이지 않는다.
-    title: { absolute: messages.siteName, template: `%s | ${messages.siteName}` },
+    // 문서·분류·검색 화면의 제목은 모두 이 템플릿을 지나므로 접두사는 여기서만 붙인다.
+    title: {
+      absolute: `${TITLE_PREFIX}${messages.siteName}`,
+      template: `${TITLE_PREFIX}%s | ${messages.siteName}`,
+    },
     description: messages.metaDescription,
   };
 }
