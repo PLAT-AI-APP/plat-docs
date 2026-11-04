@@ -4,7 +4,7 @@ PLAT 이용 가이드의 원본과, 그것을 보여 주는 문서 사이트(`si
 
 | 브랜치 | 문서 사이트 | 호스팅 |
 | --- | --- | --- |
-| `develop` | [dev-docs.plat.so](https://dev-docs.plat.so) | Vercel |
+| `develop` | [docs-dev.plat.so](https://docs-dev.plat.so) | Vercel |
 | `main` | [docs.plat.so](https://docs.plat.so) | Firebase App Hosting |
 
 > 옮기는 동안에는 앱 안의 예전 문서 화면(`plat.so/docs`)도 `publish` 워크플로가 만든 묶음(`bundle` 브랜치)을 계속 읽습니다. 앱의 문서 링크를 새 사이트로 바꾸고 나면 `publish` 워크플로와 `bundle` 브랜치는 지웁니다.
@@ -99,9 +99,10 @@ npm --prefix site run dev
 | 브랜치 | `develop` | `main` |
 | 앱 루트 | Root Directory = `site` | 앱 루트 디렉터리 = `site` |
 | 환경 변수 | 프로젝트 설정에 넣음 | `site/apphosting.yaml` |
-| `NEXT_PUBLIC_SITE_URL` | `https://dev-docs.plat.so` | `https://docs.plat.so` |
+| `NEXT_PUBLIC_SITE_URL` | `https://docs-dev.plat.so` | `https://docs.plat.so` |
 | `NEXT_PUBLIC_APP_URL` | `https://dev.plat.so` | `https://plat.so` |
 | `NEXT_PUBLIC_ALLOW_INDEXING` | `false` | 클로즈베타 동안 `false` |
+| `NEXT_PUBLIC_APP_ENV` | `dev` (탭 제목 앞에 `dev: ` 가 붙는다) | 넣지 않는다 |
 
 - 빌드는 레포 전체(`ko/`, `en/`, `assets/`, `scripts/`)를 읽으므로, 앱 루트 밖 파일을 빌드에 포함하는 설정을 켜 둡니다(Vercel 기본값).
 - 도메인은 각 호스팅에 추가한 뒤, 안내하는 CNAME 을 `plat.so` DNS(Route 53)에 넣습니다.
