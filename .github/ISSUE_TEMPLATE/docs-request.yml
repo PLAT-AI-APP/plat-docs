@@ -19,7 +19,7 @@ body:
     attributes:
       label: 대상 문서
       description: 사이트 주소나 레포 파일 경로. 새 문서면 넣을 그룹.
-      placeholder: https://plat.so/docs/ko/articles/signup
+      placeholder: https://docs.plat.so/ko/articles/sign-up
   - type: textarea
     id: detail
     attributes:
