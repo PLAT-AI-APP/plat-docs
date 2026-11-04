@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   robots: { index: ALLOW_INDEXING, follow: ALLOW_INDEXING },
   // 문서 화면의 상대 주소(canonical · hreflang · og:url)가 이 주소로 풀린다.
   metadataBase: new URL(SITE_URL),
+  // 파비콘(app/icon.png)·애플 터치 아이콘(app/apple-icon.png)은 Next 파일 규칙으로 자동 연결된다. plat-fe 와 같은 이미지를 쓴다.
 };
 
 /** 문서 사이트 뼈대. 언어별 머리(헤더 · 트리)는 [locale]/layout 이 그린다. */
